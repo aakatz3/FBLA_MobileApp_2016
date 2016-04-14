@@ -14,7 +14,6 @@
         android:layout_height="fill_parent">
 
         <LinearLayout
-            android:id="@+id/commentList"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:orientation="vertical">
@@ -44,10 +43,18 @@
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="5dp"
                     android:adjustViewBounds="true"
-                    android:maxHeight="250dp" />
+                    android:maxHeight="200dp"
+                    android:minHeight="20dp"
+                    android:nestedScrollingEnabled="false"
+                    android:minWidth="20dp" />
 
             </FrameLayout>
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/commentList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
+            </android.support.v7.widget.RecyclerView>
         </LinearLayout>
     </ScrollView>
 

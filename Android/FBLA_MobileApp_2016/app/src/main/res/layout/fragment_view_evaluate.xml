@@ -188,6 +188,7 @@
             android:layout_alignParentRight="true"
             android:ems="10"
             android:gravity="top"
+            android:imeOptions="actionDone"
             android:hint="Comment on the picture"
             android:inputType="textMultiLine"
             android:layout_below="@+id/rateTable" />

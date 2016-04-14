@@ -9,6 +9,10 @@ import org.mamkschools.mhs.fbla_mobileapp_2016.lib.*;
 
 import java.util.Scanner;
 
+/**
+ * Shows legal information about app
+ */
+
 public class LegalInfoActivity extends AppCompatActivity {
 
     @Override

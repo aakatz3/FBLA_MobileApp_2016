@@ -33,10 +33,11 @@
     <string name="ok">OK</string>
 
     <string name="hours_ago" formatted="false">%d hours ago</string>
-
+    <string name="hour_ago" formatted="false">%d hour ago</string>
 
     <string name="title_activity_upload">Upload a Picture</string>
     <string name="title_activity_legalinfo">Legal Info</string>
+    <string name="no_pics">No More Pictures</string>
 
     <string name="upload">Upload Image</string>
     <string name="imgTitle">Image Title</string>
