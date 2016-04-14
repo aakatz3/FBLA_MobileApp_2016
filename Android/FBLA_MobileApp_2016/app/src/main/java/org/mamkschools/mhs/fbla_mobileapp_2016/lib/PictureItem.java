@@ -6,8 +6,7 @@ package org.mamkschools.mhs.fbla_mobileapp_2016.lib;
 public class PictureItem {
     private String title;
     private long time;
-    private int up;
-    private int down;
+    private int rate;
     private int views;
     private int pid;
 
@@ -16,8 +15,7 @@ public class PictureItem {
     public PictureItem(String title, long time, int up, int down, int views, int pid) {
         this.title = title;
         this.time = time;
-        this.up = up;
-        this.down = down;
+        this.rate = up - down;
         this.views = views;
         this.pid = pid;
     }
@@ -38,23 +36,6 @@ public class PictureItem {
         this.time = time;
     }
 
-    public int getUp() {
-        return up;
-    }
-
-    public void setUp(int up) {
-        this.up = up;
-    }
-
-    public int getDown() {
-        return down;
-    }
-
-    public void setDown(int down) {
-        this.down = down;
-    }
-
-
     public int getViews() {
         return views;
     }
@@ -69,5 +50,13 @@ public class PictureItem {
 
     public void setPid(int pid) {
         this.pid = pid;
+    }
+
+    public int getRate() {
+        return rate;
+    }
+
+    public void setRate(int rate) {
+        this.rate = rate;
     }
 }

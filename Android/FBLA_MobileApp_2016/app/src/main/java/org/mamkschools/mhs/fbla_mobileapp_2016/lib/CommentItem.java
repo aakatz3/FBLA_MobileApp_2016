@@ -1,7 +1,7 @@
 package org.mamkschools.mhs.fbla_mobileapp_2016.lib;
 
 /**
- * Cmt
+ * Comment item in listview
  * Created by Andrew A. Katz on 4/7/2016.
  */
 public class CommentItem {

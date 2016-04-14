@@ -8,5 +8,5 @@
     <color name="fab">#BBDEFB</color>
     <color name="listDivider">#BDBDBD</color>
     <color name="topDark">#000000</color>
-    <color name="background">#BDBDBD</color>
+    <color name="background">#eeeeee</color>
 </resources>

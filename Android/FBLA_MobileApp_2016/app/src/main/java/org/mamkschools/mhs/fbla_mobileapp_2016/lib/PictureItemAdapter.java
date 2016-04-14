@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.mamkschools.mhs.fbla_mobileapp_2016.DetailMeActivity;
@@ -32,8 +33,9 @@ public class PictureItemAdapter extends RecyclerView.Adapter<PictureItemAdapter.
     public void onBindViewHolder(PictureItemAdapter.PictureViewHolder holder, int position) {
         holder.title.setText(pictureList.get(position).getTitle());
         holder.pid = pictureList.get(position).getPid();
-       holder.upCount.setText(Integer.toString(pictureList.get(position).getUp()));
-        holder.downCount.setText(Integer.toString(pictureList.get(position).getDown()));
+        holder.rateCount.setText(Integer.toString(Math.abs(pictureList.get(position).getRate())));
+        holder.rateImage.setImageResource(pictureList.get(position).getRate() >= 0 ?
+                R.drawable.ic_thumb_up_green_48dp : R.drawable.ic_thumb_down_rd_48dp);
         holder.hours.setText(String.format(holder.hours.getContext()
                 .getString(pictureList.get(position).getTime() == 1 ?
                         R.string.hour_ago : R.string.hours_ago)
@@ -45,10 +47,9 @@ public class PictureItemAdapter extends RecyclerView.Adapter<PictureItemAdapter.
     }
 
     public static class PictureViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-
-        protected TextView upCount;
-        protected TextView downCount;
+        protected TextView rateCount;
         protected TextView hours;
+        protected ImageView rateImage;
         protected int pid;
         protected TextView title;
 
@@ -56,8 +57,8 @@ public class PictureItemAdapter extends RecyclerView.Adapter<PictureItemAdapter.
             super(itemView);
             title = (TextView) itemView.findViewById(R.id.TitleText);
             hours = (TextView) itemView.findViewById(R.id.date);
-            upCount = (TextView) itemView.findViewById(R.id.ucount);
-            downCount = (TextView) itemView.findViewById(R.id.dcount);
+            rateCount = (TextView) itemView.findViewById(R.id.rateCount);
+            rateImage = (ImageView) itemView.findViewById(R.id.rateImg);
             itemView.setOnClickListener(this);
         }
 
@@ -67,7 +68,6 @@ public class PictureItemAdapter extends RecyclerView.Adapter<PictureItemAdapter.
             myIntent.putExtra("pid", pid);
             myIntent.putExtra("title", title.getText());
             v.getContext().startActivity(myIntent);
-
         }
     }
 }

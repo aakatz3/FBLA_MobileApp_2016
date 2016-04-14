@@ -40,6 +40,7 @@ import java.util.Map;
 import im.delight.android.location.SimpleLocation;
 
 /**
+ * Fragment for evaluating pictures. This is on the main screen when the app is launched.
  * Created by jackphillips on 2/16/16.
  */
 public class FragmentEvaluate extends Fragment implements View.OnClickListener{
