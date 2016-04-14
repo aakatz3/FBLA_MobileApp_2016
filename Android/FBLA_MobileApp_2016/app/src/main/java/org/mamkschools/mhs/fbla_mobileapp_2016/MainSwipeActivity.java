@@ -95,9 +95,7 @@ public class MainSwipeActivity extends AppCompatActivity implements View.OnClick
         tabLayout.setupWithViewPager(viewPager);
 
         PictureHelper mDbHelper = new PictureHelper(getApplicationContext());
-
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
-
         int picture = 0;
 
         File picLocation = getFilesDir();
@@ -106,6 +104,9 @@ public class MainSwipeActivity extends AppCompatActivity implements View.OnClick
 
         ImageButton more = (ImageButton) findViewById(R.id.more_stuff);
         more.setOnClickListener(this);
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(this);
     }
 
 

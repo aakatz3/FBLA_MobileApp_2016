@@ -35,9 +35,10 @@
             android:adjustViewBounds="false"
             android:clickable="true"
             android:contextClickable="true"
+            android:layout_marginRight="5dp"
             android:cropToPadding="false"
-            android:paddingRight="25dp"
-            android:paddingLeft="20dp" />
+            android:paddingRight="10dp"
+            android:layout_marginLeft="5dp" />
         </LinearLayout>
     </android.support.design.widget.AppBarLayout>
 
@@ -48,12 +49,32 @@
             android:layout_height="match_parent">
 
             <android.support.v4.view.ViewPager android:id="@+id/view_pager"
-                android:layout_width="match_parent" android:layout_height="match_parent"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior"
                 android:layout_marginRight="5dp" />
 
 
         </FrameLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="end|bottom"
+        android:layout_toEndOf="@+id/spacer"
+
+        android:layout_toRightOf="@+id/spacer"
+        android:src="@drawable/ic_camera"
+        app:backgroundTint="#FF4D4853"
+        app:borderWidth="0dp"
+
+        app:elevation="1dp"
+        android:visibility="gone">
+
+    </android.support.design.widget.FloatingActionButton>
 
 
 </android.support.design.widget.CoordinatorLayout>

@@ -16,12 +16,7 @@ public final class Commands {
     public final class Get{
         public static final String TEST = "test/get";
         public static final String LOGOUT = "user/logout" + AUTHCODE_BASE;
-        public static final String FETCH = "picture/fetch" + AUTHCODE_BASE;
-        public static final String VERIFY = "user/verify" + AUTHCODE_BASE;
-        public static final String FETCH_MINE = "picture/fetch/me" + AUTHCODE_BASE;
-        public static final String RAW_PIC = "picture/";
-        public static final String COMMENT = "/comment";
-
+        public static final String FETCH = "picture/fetch";
 
         private Get(){
             //Exists to defeat instantiation
@@ -31,8 +26,6 @@ public final class Commands {
         public static final String LOGIN = "user/login";
         public static final String REGISTER = "user/register";
         public static final String POSTPIC = "picture/upload";
-
-
         private Post() {
             //Exists to defeat instantiation
         }
