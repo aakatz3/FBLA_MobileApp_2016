@@ -6,7 +6,7 @@
     <color name="positive">#B39DDB</color>
     <color name="negative">#7E57C2</color>
     <color name="fab">#BBDEFB</color>
-    <color name="listDivider">#BDBDBD</color>
+    <color name="topbar">#E0E0E0</color>
     <color name="topDark">#000000</color>
     <color name="background">#BDBDBD</color>
 </resources>

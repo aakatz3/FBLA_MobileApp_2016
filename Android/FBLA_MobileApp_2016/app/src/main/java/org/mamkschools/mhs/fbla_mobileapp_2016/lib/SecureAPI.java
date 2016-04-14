@@ -30,9 +30,7 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManagerFactory;
 
 /**
- * Handles secure server communications
  * SecureAPI singleton class
- * Created by Yi Zhao
  */
 public class SecureAPI {
 

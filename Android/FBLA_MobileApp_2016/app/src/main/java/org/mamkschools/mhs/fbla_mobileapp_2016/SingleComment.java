@@ -45,14 +45,14 @@ public class SingleComment extends android.app.Fragment {
         textUser.setText(user);
         TextView count = (TextView) view.findViewById(R.id.dcount);
         count.setText(style);
-        //View sep = view.findViewById(R.id.sep);
-        //sep.setVisibility(showDiv ? View.VISIBLE : View.GONE);
+        View sep = view.findViewById(R.id.sep);
+        sep.setVisibility(showDiv ? View.VISIBLE : View.GONE);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.target_single_comment, container, false);
+        return inflater.inflate(R.layout.fragment_single_comment, container, false);
     }
 }

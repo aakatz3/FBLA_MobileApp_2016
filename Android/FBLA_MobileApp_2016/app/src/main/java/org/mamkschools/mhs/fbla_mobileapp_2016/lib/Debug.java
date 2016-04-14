@@ -3,7 +3,6 @@ package org.mamkschools.mhs.fbla_mobileapp_2016.lib;
 import android.util.Log;
 
 /**
- * Contains simple debugging stuff
  * Created by Andrew on 2/14/2016.
  */
 public class Debug {

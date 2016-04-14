@@ -11,13 +11,12 @@ import android.util.Log;
 import java.util.Map;
 
 /**
- * Constants for App, for use across app
+ * Constants for APP
  * Created by Andrew on 10/16/2015.
  */
 public final class Constants {
     //API URL
     public static final String API_BASE_URL = "https://aakatz3.aakportfolio.com:9084/fbla2016/api/";
-    //public static final String API_BASE_URL = "https://192.168.1.5/fbla2016/api/";
 
     //Authcode needs to be saved and loaded
     public static String AUTHCODE = null;
@@ -28,7 +27,6 @@ public final class Constants {
     public static double LATITUDE;
     public static double LONGITUDE;
 
-    //Single ImageBitmap for most bitmaps; *should* help with memory usage
     public static Bitmap imageBitmap = null;
 
     private Constants(){
