@@ -78,6 +78,7 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         Button mUsernameSignInButton = (Button) findViewById(R.id.username_sign_in_button);
+        assert mUsernameSignInButton != null;
         mUsernameSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -86,6 +87,7 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         Button mUsernameRegisterButton = (Button) findViewById(R.id.username_register_button);
+        assert mUsernameRegisterButton != null;
         mUsernameRegisterButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {

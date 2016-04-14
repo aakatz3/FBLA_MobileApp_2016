@@ -21,6 +21,7 @@ import android.os.Environment;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
@@ -51,13 +52,16 @@ import java.util.Map;
 
 import im.delight.android.location.SimpleLocation;
 
+/**
+ * This activity allows the user to upload pictures. It may be replaced with something with an integrated camera, or something...
+ * Created by Andrew Katz
+ */
+
 public class UploadActivity extends AppCompatActivity implements View.OnClickListener {
     private static final int PICTURE_REQUEST_CODE = 1;
     public static ScrollView mUploadForm;
     public static ProgressBar mProgressView;
     private static SimpleLocation simpleLocation;
-    private Button getPic;
-    private Button uploadBtn;
     private EditText editTitleText;
     private ImageView picPrev;
     private Uri outputFileUri;
@@ -84,20 +88,20 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
         }
 
         simpleLocation = new SimpleLocation(getApplicationContext());
-        getPic = (Button) (findViewById(R.id.getPic));
+        Button getPic = (Button) (findViewById(R.id.getPic));
         getPic.setOnClickListener(this);
         editTitleText = (EditText) findViewById(R.id.editTitleText);
         picPrev = (ImageView) findViewById(R.id.uploadImage);
-        uploadBtn = (Button) findViewById(R.id.uploadNow);
+        Button uploadBtn = (Button) findViewById(R.id.uploadNow);
         uploadBtn.setOnClickListener(this);
         mUploadForm = (ScrollView) findViewById(R.id.uploadForm);
         mProgressView = (ProgressBar) findViewById(R.id.uploadProgress);
         if (!isNetworkAvailable()) {
-            Toast.makeText(getApplicationContext(), "Network is not availible. Please connect to the internet", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "Network is not available. Please connect to the internet", Toast.LENGTH_LONG).show();
             finish();
         }
 
-        openImageIntent();
+
     }
 
     @Override
@@ -167,10 +171,13 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
 
             if (!isCamera) {
                 outputFileUri = data.getData();
+                Debug.log("Using data.getData");
+            } else {
+                Debug.log("Using filename");
             }
 
 
-
+            showProgress(true);
             try {
                 Bitmap b;
                 {
@@ -178,6 +185,7 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
                     b = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
                 }
                 picOutputStream = new ByteArrayOutputStream();
+
                 int maxDim = Math.max(b.getWidth(), b.getHeight());
                 b = Bitmap.createScaledBitmap(b,map(b.getWidth(),0,maxDim, 0, 4096), map(b.getHeight(), 0, maxDim, 0, 4096), false);
                 b.compress(Bitmap.CompressFormat.JPEG, 70, picOutputStream);
@@ -192,9 +200,9 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
                 if(Debug.DEBUG_MODE){
                     outOfMemoryError.printStackTrace();
                 }
-                Toast.makeText(getApplicationContext(), "Out of memory, please increase emmulator ram or close other apps", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Out of memory, please increase emulator ram or close other apps. If the issue persists, please contact teh developer.", Toast.LENGTH_LONG).show();
             }
-
+            showProgress(false);
         }
     }
 
@@ -250,8 +258,8 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private static class PicUploadParams {
-        public Map<String, String> paramMap = new HashMap<String, String>();
-        public Map<String, ByteArrayOutputStream> pics = new HashMap<String, ByteArrayOutputStream>();
+        public Map<String, String> paramMap = new HashMap<>();
+        public Map<String, ByteArrayOutputStream> pics = new HashMap<>();
     }
 
     private class PicUpload extends AsyncTask<PicUploadParams, Void, Boolean> {
@@ -299,7 +307,7 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
         int bufferSize = 1024;
         byte[] buffer = new byte[bufferSize];
 
-        int len = 0;
+        int len;
         while ((len = inputStream.read(buffer)) != -1) {
             byteBuffer.write(buffer, 0, len);
         }
@@ -315,7 +323,7 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.READ_EXTERNAL_STORAGE,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE};
-        ArrayList<String> disabledPerms = new ArrayList<String>();
+        ArrayList<String> disabledPerms = new ArrayList<>();
         for (String perm: permissions) {
             if(ContextCompat.checkSelfPermission(this,
                     Manifest.permission.READ_CONTACTS)
@@ -328,26 +336,27 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
+                                           @NonNull String permissions[], @NonNull int[] grantResults) {
         switch (requestCode) {
             case PERMISSION_REQUEST_CODE: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
                     // permission was granted, yay!
+                    openImageIntent();
+                    break;
                 } else {
 
                     // permission denied, boo!
                     // must open settings, as these permissions are critical
 
-                    Toast.makeText(getApplicationContext(), "Please enable location permissions", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(),
+                            "Please enable location permissions", Toast.LENGTH_LONG).show();
                     Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
                             Uri.fromParts("package", getPackageName(), null));
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                 }
-                return;
             }
 
             // other 'case' lines to check for other
@@ -360,7 +369,7 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
         }
         PicUploadParams uploadPic = new PicUploadParams();
         uploadPic.pics.put("picture", picOutputStream);
-        if(editTitleText.getText().toString() == null || editTitleText.getText().toString().equals("")){
+        if(editTitleText.getText().toString().equals("")){
             editTitleText.setError("Title is required");
             editTitleText.requestFocus();
             return;

@@ -1,15 +1,19 @@
 package org.mamkschools.mhs.fbla_mobileapp_2016;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.design.widget.FloatingActionButton;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -19,8 +23,9 @@ import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.mamkschools.mhs.fbla_mobileapp_2016.lib.Commands;
 import org.mamkschools.mhs.fbla_mobileapp_2016.lib.Constants;
-import org.mamkschools.mhs.fbla_mobileapp_2016.lib.PictureContract;
+import org.mamkschools.mhs.fbla_mobileapp_2016.lib.PictureEntry;
 import org.mamkschools.mhs.fbla_mobileapp_2016.lib.PictureHelper;
 import org.mamkschools.mhs.fbla_mobileapp_2016.lib.SecureAPI;
 import org.mamkschools.mhs.fbla_mobileapp_2016.lib.Debug;
@@ -37,7 +42,7 @@ import im.delight.android.location.SimpleLocation;
 /**
  * Created by jackphillips on 2/16/16.
  */
-public class FragmentEvaluate extends Fragment implements View.OnClickListener {
+public class FragmentEvaluate extends Fragment implements View.OnClickListener{
     private SQLiteDatabase db;
     private int picNumber;
     private File location;
@@ -51,6 +56,7 @@ public class FragmentEvaluate extends Fragment implements View.OnClickListener {
     private TextView titleLabel;
     private TextView additionalLabel;
 
+
     private View ratingLayout;
     private View buttonLayout;
     private View instructions;
@@ -58,6 +64,8 @@ public class FragmentEvaluate extends Fragment implements View.OnClickListener {
     private int currentRating;
 
     private Cursor c;
+
+    private GetPicture picDl;
 
 
     public static FragmentEvaluate newInstance(SQLiteDatabase db, int picNumber, File location, SimpleLocation simpleLocation) {
@@ -76,7 +84,8 @@ public class FragmentEvaluate extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_view_evaluate, container, false);
         titleLabel = (TextView) rootView.findViewById(R.id.title_label);
-        titleLabel.setText("No More Pictures"); //TODO use Strings xml
+        titleLabel.setText(R.string.no_pics);
+
 
 
         ratingLayout = rootView.findViewById(R.id.ratingLayout);
@@ -84,10 +93,10 @@ public class FragmentEvaluate extends Fragment implements View.OnClickListener {
         instructions = rootView.findViewById(R.id.instructions);
         additionalLabel = (TextView) rootView.findViewById(R.id.additional_label);
 
-        View imageFrame = rootView.findViewById(R.id.imageFrame);
 
         image = (ImageView) rootView.findViewById(R.id.imageView);
         descriptionLabel = (TextView) rootView.findViewById(R.id.description_label);
+
 
 
         FloatingActionButton yes = (FloatingActionButton) rootView.findViewById(R.id.yesButton);
@@ -99,8 +108,22 @@ public class FragmentEvaluate extends Fragment implements View.OnClickListener {
         SeekBar style = (SeekBar) rootView.findViewById(R.id.styleRating);
         style.setProgress(style.getMax() / 2);
 
-        Button submit = (Button) rootView.findViewById(R.id.submit_button);
+        final Button submit = (Button) rootView.findViewById(R.id.submit_button);
         submit.setOnClickListener(this);
+
+        // your text box
+        EditText edit_txt = (EditText) rootView.findViewById(R.id.commentText);
+
+        edit_txt.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    submit.performClick();
+                    return true;
+                }
+                return false;
+            }
+        });
 
         Button cancel = (Button) rootView.findViewById(R.id.cancel_button);
         cancel.setOnClickListener(this);
@@ -113,13 +136,15 @@ public class FragmentEvaluate extends Fragment implements View.OnClickListener {
         if(c.getCount() > 0 && picNumber < c.getCount()) {
             Debug.log("From: " + picNumber);
             c.moveToPosition(picNumber);
-            int itemId = c.getInt(c.getColumnIndexOrThrow(PictureContract.PictureEntry.COLUMN_NAME_PICTURE_ID));
-            String title = c.getString(c.getColumnIndexOrThrow(PictureContract.PictureEntry.COLUMN_NAME_TITLE));
-            String user = c.getString(c.getColumnIndexOrThrow(PictureContract.PictureEntry.COLUMN_NAME_USERNAME));
-            int views = c.getInt(c.getColumnIndexOrThrow(PictureContract.PictureEntry.COLUMN_NAME_VIEWS));
+            int itemId = c.getInt(c.getColumnIndexOrThrow(PictureEntry.COLUMN_NAME_PICTURE_ID));
+            String title = c.getString(c.getColumnIndexOrThrow(PictureEntry.COLUMN_NAME_TITLE));
+            String user = c.getString(c.getColumnIndexOrThrow(PictureEntry.COLUMN_NAME_USERNAME));
+            int views = c.getInt(c.getColumnIndexOrThrow(PictureEntry.COLUMN_NAME_VIEWS));
             titleLabel.setText(title.length() > 20 ? title.substring(0, 20) : title);
             descriptionLabel.setText(user);
         }
+
+        hideKeyboard();
 
         return rootView;
     }
@@ -127,7 +152,7 @@ public class FragmentEvaluate extends Fragment implements View.OnClickListener {
     public int getPictureId(int picture){
         if(c.getCount() > 0 && picture < c.getCount()) {
             c.moveToPosition(picture);
-            return c.getInt(c.getColumnIndexOrThrow(PictureContract.PictureEntry.COLUMN_NAME_PICTURE_ID));
+            return c.getInt(c.getColumnIndexOrThrow(PictureEntry.COLUMN_NAME_PICTURE_ID));
         }
         return -1;
 
@@ -137,16 +162,26 @@ public class FragmentEvaluate extends Fragment implements View.OnClickListener {
         String[] data = new String[3];
         if(c.getCount() > 0 && picture < c.getCount()) {
             c.moveToPosition(picture);
-            data[0] = c.getString(c.getColumnIndexOrThrow(PictureContract.PictureEntry.COLUMN_NAME_TITLE));
-            data[1] = c.getString(c.getColumnIndexOrThrow(PictureContract.PictureEntry.COLUMN_NAME_USERNAME));
-            data[2] = c.getString(c.getColumnIndexOrThrow(PictureContract.PictureEntry.COLUMN_NAME_HOURS)) + " hours ago, ";
-            data[2] += c.getString(c.getColumnIndexOrThrow(PictureContract.PictureEntry.COLUMN_NAME_DIST)) + " miles away";
+            data[0] = c.getString(c.getColumnIndexOrThrow(PictureEntry.COLUMN_NAME_TITLE));
+            data[1] = c.getString(c.getColumnIndexOrThrow(PictureEntry.COLUMN_NAME_USERNAME));
+            double hours = Double.parseDouble(c.getString(c.getColumnIndexOrThrow(PictureEntry.COLUMN_NAME_HOURS)));
+            double miles = Double.parseDouble(c.getString(c.getColumnIndexOrThrow(PictureEntry.COLUMN_NAME_DIST)));
+            data[2] = hours + (hours == 1 ? " hour ago, " : " hours ago, ");
+            data[2] += miles + (miles == 1 ? " mile away" : " miles away");
             return data;
         }
         data[0] = "No More Pictures";
         data[1] = "";
         data[2] = "";
         return data;
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (picDl != null && !picDl.getStatus().equals(AsyncTask.Status.FINISHED)) {
+            picDl.cancel(true);
+        }
     }
 
     public void runFetch(int itemId) {
@@ -156,7 +191,8 @@ public class FragmentEvaluate extends Fragment implements View.OnClickListener {
         descriptionLabel.setText(data[1]);
         additionalLabel.setText(data[2]);
         if(picID > 0) {
-            new GetPicture().execute(picID);
+            picDl = new GetPicture();
+            picDl.execute(picID);
         }else{
             if(runOnce) {
                 image.setImageResource(R.drawable.finish);
@@ -186,12 +222,13 @@ public class FragmentEvaluate extends Fragment implements View.OnClickListener {
                 break;
 
             case R.id.cancel_button:
+                hideKeyboard();
                 new SubmitRating().execute(postParams);
                 this.picNumber += 1;
                 runFetch(picNumber);
                 break;
-
             case R.id.submit_button:
+                hideKeyboard();
                 new SubmitRating().execute(getRateParams(postParams));
                 this.picNumber += 1;
                 runFetch(picNumber);
@@ -229,25 +266,25 @@ public class FragmentEvaluate extends Fragment implements View.OnClickListener {
 
     public Cursor getInfo(){
         String[] projection = {
-                PictureContract.PictureEntry._ID,
-                PictureContract.PictureEntry.COLUMN_NAME_PICTURE_ID,
-                PictureContract.PictureEntry.COLUMN_NAME_GEOLONG,
-                PictureContract.PictureEntry.COLUMN_NAME_GEOLAT,
-                PictureContract.PictureEntry.COLUMN_NAME_USERNAME,
-                PictureContract.PictureEntry.COLUMN_NAME_VIEWS,
-                PictureContract.PictureEntry.COLUMN_NAME_TITLE,
-                PictureContract.PictureEntry.COLUMN_NAME_DIST,
-                PictureContract.PictureEntry.COLUMN_NAME_HOURS
+                PictureEntry._ID,
+                PictureEntry.COLUMN_NAME_PICTURE_ID,
+                PictureEntry.COLUMN_NAME_GEOLONG,
+                PictureEntry.COLUMN_NAME_GEOLAT,
+                PictureEntry.COLUMN_NAME_USERNAME,
+                PictureEntry.COLUMN_NAME_VIEWS,
+                PictureEntry.COLUMN_NAME_TITLE,
+                PictureEntry.COLUMN_NAME_DIST,
+                PictureEntry.COLUMN_NAME_HOURS
         };
 
         String sortOrder =
-                PictureContract.PictureEntry.COLUMN_NAME_PICTURE_ID + " ASC";
+                PictureEntry.COLUMN_NAME_PICTURE_ID + " ASC";
         if(db != null) {
             return db.query(
-                    PictureContract.PictureEntry.TABLE_NAME,  // The table to query
+                    PictureEntry.TABLE_NAME,                  // The table to query
                     projection,                               // The columns to return
-                    null,                                // The columns for the WHERE clause
-                    null,                            // The values for the WHERE clause
+                    null,                                     // The columns for the WHERE clause
+                    null,                                     // The values for the WHERE clause
                     null,                                     // don't group the rows
                     null,                                     // don't filter by row groups
                     sortOrder                                 // The sort order
@@ -256,6 +293,8 @@ public class FragmentEvaluate extends Fragment implements View.OnClickListener {
             return null;
         }
     }
+
+
     private class GetPicture extends AsyncTask<Integer, Void, Boolean> {
         SecureAPI picture = SecureAPI.getInstance(getContext());
 
@@ -287,12 +326,14 @@ public class FragmentEvaluate extends Fragment implements View.OnClickListener {
         SecureAPI picture = SecureAPI.getInstance(getContext());
         JSONObject result;
 
+        @SafeVarargs
         @Override
-        protected Boolean doInBackground(Map<String, String>... params) {
+        protected final Boolean doInBackground(Map<String, String>... params) {
 
             Map<String, String> finalParams = params[0];
             try {
-                result = picture.HTTPSPOST("picture/" + finalParams.get("pid") + "/comment?authcode=" + Constants.AUTHCODE, finalParams);
+                result = picture.HTTPSPOST("picture/" + finalParams.get("pid")
+                        + "/comment?authcode=" + Constants.AUTHCODE, finalParams);
             } catch(Exception e) {
                 return false;
             }
@@ -302,7 +343,7 @@ public class FragmentEvaluate extends Fragment implements View.OnClickListener {
         @Override
         protected void onPostExecute(Boolean v) {
             if(v) {
-
+                Debug.log("Rating worked");
             } else {
                 Toast.makeText(rootView.getContext(), "Rating failed", Toast.LENGTH_SHORT).show();
             }
@@ -316,14 +357,12 @@ public class FragmentEvaluate extends Fragment implements View.OnClickListener {
 
         @Override
         protected Void doInBackground(Void... params) {
-
             long secondsInMilli = 1000;
             long minutesInMilli = secondsInMilli * 60;
             long hoursInMilli = minutesInMilli * 60;
             long daysInMilli = hoursInMilli * 24;
 
 
-            int amount = 25;
             int dist = 10000;
             int view = 15;
 
@@ -331,13 +370,13 @@ public class FragmentEvaluate extends Fragment implements View.OnClickListener {
             Constants.LATITUDE = simpleLocation.getLatitude();
             Constants.LONGITUDE = simpleLocation.getLongitude();
 
-            db.execSQL("Delete from " + PictureContract.PictureEntry.TABLE_NAME);
+            db.execSQL("Delete from " + PictureEntry.TABLE_NAME);
             ContentValues values = new ContentValues();
 
             Debug.log(Constants.LATITUDE + " " + Constants.LONGITUDE);
 
             try {
-                JSONObject response = picture.HTTPSGET("picture/fetch?authcode=" + Constants.AUTHCODE + "&ft_me=1" + "&ft_views=" + view
+                JSONObject response = picture.HTTPSGET(Commands.Get.FETCH + Constants.AUTHCODE + "&ft_me=1" + "&ft_views=" + view
                         + "&geolong=" + Constants.LONGITUDE + "&geolat=" + Constants.LATITUDE + "&ft_dist=" + dist);
 
                 JSONArray array = response.getJSONArray("data");
@@ -345,14 +384,14 @@ public class FragmentEvaluate extends Fragment implements View.OnClickListener {
                 for(int i = 0; i < array.length(); i++ ){
 
                     int views = array.getJSONObject(i).getInt("views");
-                    values.put(PictureContract.PictureEntry.COLUMN_NAME_PICTURE_ID, array.getJSONObject(i).getInt("pid"));
-                    values.put(PictureContract.PictureEntry.COLUMN_NAME_GEOLAT, array.getJSONObject(i).getDouble("geolat"));
-                    values.put(PictureContract.PictureEntry.COLUMN_NAME_GEOLONG, array.getJSONObject(i).getDouble("geolong"));
-                    values.put(PictureContract.PictureEntry.COLUMN_NAME_DIST, Math.round(array.getJSONObject(i).getDouble("dist")));
-                    values.put(PictureContract.PictureEntry.COLUMN_NAME_TITLE, array.getJSONObject(i).getString("title"));
-                    values.put(PictureContract.PictureEntry.COLUMN_NAME_USERNAME, array.getJSONObject(i).getString("username"));
-                    values.put(PictureContract.PictureEntry.COLUMN_NAME_VIEWS, views);
-                    values.put(PictureContract.PictureEntry.COLUMN_NAME_CREATED, array.getJSONObject(i).getString("created"));
+                    values.put(PictureEntry.COLUMN_NAME_PICTURE_ID, array.getJSONObject(i).getInt("pid"));
+                    values.put(PictureEntry.COLUMN_NAME_GEOLAT, array.getJSONObject(i).getDouble("geolat"));
+                    values.put(PictureEntry.COLUMN_NAME_GEOLONG, array.getJSONObject(i).getDouble("geolong"));
+                    values.put(PictureEntry.COLUMN_NAME_DIST, Math.round(array.getJSONObject(i).getDouble("dist")));
+                    values.put(PictureEntry.COLUMN_NAME_TITLE, array.getJSONObject(i).getString("title"));
+                    values.put(PictureEntry.COLUMN_NAME_USERNAME, array.getJSONObject(i).getString("username"));
+                    values.put(PictureEntry.COLUMN_NAME_VIEWS, views);
+                    values.put(PictureEntry.COLUMN_NAME_CREATED, array.getJSONObject(i).getString("created"));
 
                     //Calculates priority
                     int p;
@@ -362,20 +401,22 @@ public class FragmentEvaluate extends Fragment implements View.OnClickListener {
                         p = 30/(views - 10);
 
                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-                    long different = new Date().getTime() - simpleDateFormat.parse(array.getJSONObject(i).getString("created")).getTime();
+                    long different = new Date().getTime() -
+                            simpleDateFormat.parse(array.getJSONObject(i)
+                                    .getString("created")).getTime();
                     long elapsedHours = different / hoursInMilli;
                     if(elapsedHours < 10) {
                         p += 3 * elapsedHours;
                     } else {
                         p += 30;
                     }
-                    values.put(PictureContract.PictureEntry.COLUMN_NAME_HOURS, elapsedHours);
-                    values.put(PictureContract.PictureEntry.COLUMN_NAME_PRIORITY, p);
+                    values.put(PictureEntry.COLUMN_NAME_HOURS, elapsedHours);
+                    values.put(PictureEntry.COLUMN_NAME_PRIORITY, p);
 
                     //adds only pictures we want to db
                     if(views < 15 && elapsedHours < 120) {
                         db.insert(
-                                PictureContract.PictureEntry.TABLE_NAME,
+                                PictureEntry.TABLE_NAME,
                                 "null",
                                 values);
                     }
@@ -391,7 +432,7 @@ public class FragmentEvaluate extends Fragment implements View.OnClickListener {
 
         @Override
         protected void onPostExecute(Void v) {
-            Debug.log("Finished getting Picture Infomation");
+            Debug.log("Finished getting Picture Information");
             c = getInfo();
             if(c.getCount() > 0){
                 runOnce = true;
@@ -403,5 +444,17 @@ public class FragmentEvaluate extends Fragment implements View.OnClickListener {
 
         }
     }
+    public void hideKeyboard(){
+        try {
+            InputMethodManager inputManager = (InputMethodManager)
+                    getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 
+            inputManager.hideSoftInputFromWindow(
+                    getActivity().getCurrentFocus().getWindowToken(),
+                    InputMethodManager.HIDE_NOT_ALWAYS);
+        }catch (Exception ignored){
+
+        }
+
+    }
 }
