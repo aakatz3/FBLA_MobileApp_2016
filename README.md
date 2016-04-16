@@ -22,3 +22,4 @@ All documentation is located in the Doc folder.
 
 #### Deadlines
 * FBLA State Competition: 4/13-15
+* FBLA Nationals Competition: 6/29-7/2
