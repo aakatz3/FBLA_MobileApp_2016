@@ -1,4 +1,4 @@
-package org.mamkschools.mhs.fbla_mobileapp_2016.lib;
+package org.mamkschools.mhs.fbla_mobileapp_2016;
 
 import android.content.Context;
 import android.graphics.Canvas;

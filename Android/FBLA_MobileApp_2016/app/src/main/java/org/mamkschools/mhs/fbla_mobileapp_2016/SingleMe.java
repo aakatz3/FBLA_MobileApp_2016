@@ -5,15 +5,12 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.ListView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -22,7 +19,6 @@ import org.mamkschools.mhs.fbla_mobileapp_2016.lib.PictureItem;
 import org.mamkschools.mhs.fbla_mobileapp_2016.lib.PictureItemAdapter;
 import org.mamkschools.mhs.fbla_mobileapp_2016.lib.SecureAPI;
 import org.mamkschools.mhs.fbla_mobileapp_2016.lib.Debug;
-import org.mamkschools.mhs.fbla_mobileapp_2016.lib.SimpleDividerItemDecoration;
 
 import java.io.File;
 import java.text.SimpleDateFormat;

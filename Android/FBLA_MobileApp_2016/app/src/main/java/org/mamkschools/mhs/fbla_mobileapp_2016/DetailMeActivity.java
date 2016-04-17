@@ -1,6 +1,5 @@
 package org.mamkschools.mhs.fbla_mobileapp_2016;
 
-import android.app.FragmentTransaction;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -8,6 +7,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,10 +18,8 @@ import org.mamkschools.mhs.fbla_mobileapp_2016.lib.CommentItem;
 import org.mamkschools.mhs.fbla_mobileapp_2016.lib.CommentItemAdapter;
 import org.mamkschools.mhs.fbla_mobileapp_2016.lib.Constants;
 import org.mamkschools.mhs.fbla_mobileapp_2016.lib.PictureHelper;
-import org.mamkschools.mhs.fbla_mobileapp_2016.lib.PictureItemAdapter;
 import org.mamkschools.mhs.fbla_mobileapp_2016.lib.SecureAPI;
 import org.mamkschools.mhs.fbla_mobileapp_2016.lib.Debug;
-import org.mamkschools.mhs.fbla_mobileapp_2016.lib.SimpleDividerItemDecoration;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -35,6 +33,7 @@ public class DetailMeActivity extends AppCompatActivity  {
     ImageView myImage;
     GetPicture picDownload;
     GetComments comDownload;
+    private TextView titleText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +52,7 @@ public class DetailMeActivity extends AppCompatActivity  {
             int pid = extras.getInt("pid");
             String imgTitle = extras.getString("title");
             setTitle(imgTitle);
-            TextView titleText = (TextView) findViewById(R.id.myImageTitle);
+            titleText = (TextView) findViewById(R.id.myImageTitle);
             titleText.setText(imgTitle);
             picDownload = new GetPicture();
             picDownload.execute(pid);
@@ -152,6 +151,14 @@ public class DetailMeActivity extends AppCompatActivity  {
             if(v){
                 Constants.imageBitmap = PictureHelper.getPictureBitmap(picFile);
                 myImage.setImageBitmap(Constants.imageBitmap);
+                myImage.setOnClickListener(new View.OnClickListener(){
+
+                    @Override
+                    public void onClick(View v) {
+                        new PictureDialog(DetailMeActivity.this,
+                                Constants.imageBitmap, titleText.getText().toString()).show();
+                    }
+                });
             }else{
                 Debug.log("Life will go on");
             }

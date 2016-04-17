@@ -96,6 +96,7 @@ public class FragmentEvaluate extends Fragment implements View.OnClickListener{
 
 
         image = (ImageView) rootView.findViewById(R.id.imageView);
+        image.setOnClickListener(this);
         descriptionLabel = (TextView) rootView.findViewById(R.id.description_label);
 
 
@@ -233,6 +234,10 @@ public class FragmentEvaluate extends Fragment implements View.OnClickListener{
                 new SubmitRating().execute(getRateParams(postParams));
                 this.picNumber += 1;
                 runFetch(picNumber);
+                break;
+            case R.id.imageView:
+                new PictureDialog(getContext(),
+                        Constants.imageBitmap, titleLabel.getText().toString()).show();
                 break;
         }
 
@@ -456,6 +461,6 @@ public class FragmentEvaluate extends Fragment implements View.OnClickListener{
         }catch (Exception ignored){
 
         }
-
     }
+
 }
