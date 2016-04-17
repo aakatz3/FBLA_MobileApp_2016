@@ -171,6 +171,9 @@ public class MainSwipeActivity extends AppCompatActivity implements View.OnClick
             case R.id.action_about:
                 showAbout();
                 return true;
+            case R.id.action_dress:
+                showDressCode();
+                return true;
             default:
                 return false;
         }
@@ -296,5 +299,9 @@ public class MainSwipeActivity extends AppCompatActivity implements View.OnClick
             // other 'case' lines to check for other
             // permissions this app might request
         }
+    }
+    private void showDressCode(){
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(Constants.DRESS_CODE));
+        startActivity(browserIntent);
     }
 }

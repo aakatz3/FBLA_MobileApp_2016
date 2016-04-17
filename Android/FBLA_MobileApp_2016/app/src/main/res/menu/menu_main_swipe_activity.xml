@@ -3,16 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".MainSwipeActivity">
 
-    <!-- Always show (Critical functions) -->
 
-
-    <!-- Show if room (nice to have out, have icons, not super important) -->
-
-
-    <!-- Never Show (not often needed, no icon_ -->
-    <item android:id="@+id/action_logout"  android:title="@string/action_logout"
-        android:orderInCategory="100" app:showAsAction="never" />
     <item android:id="@+id/action_about"  android:title="@string/action_about"
         android:orderInCategory="100" app:showAsAction="never" />
+    <item android:id="@+id/action_dress"  android:title="@string/action_dress"
+        android:orderInCategory="100" app:showAsAction="never" />
+    <item android:id="@+id/action_logout"  android:title="@string/action_logout"
+        android:orderInCategory="100" app:showAsAction="never" />
+
 
 </menu>

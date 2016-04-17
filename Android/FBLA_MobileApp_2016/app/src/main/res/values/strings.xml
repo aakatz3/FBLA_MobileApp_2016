@@ -26,6 +26,7 @@
     <!-- Strings relating to menus -->
     <string name="action_logout">Logout</string>
     <string name="action_about">About</string>
+    <string name="action_dress">View Dress Code</string>
 
     <string name="about_title">About</string>
     <string name="about_message">This app was created by Andrew Katz, Yi Zhao, and Jack Phillips. Copyright © 2016 Andrew Katz, Yi Zhao, and Jack Phillips. All Rights Reserved.</string>

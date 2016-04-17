@@ -19,6 +19,9 @@ public final class Constants {
     public static final String API_BASE_URL = "https://aakatz3.aakportfolio.com:9084/fbla2016/api/";
     //public static final String API_BASE_URL = "https://192.168.1.5/fbla2016/api/";
 
+    //DC
+    public static final String DRESS_CODE = "http://www.fbla-pbl.org/about-fbla/#dress";
+
     //Authcode needs to be saved and loaded
     public static String AUTHCODE = null;
 
