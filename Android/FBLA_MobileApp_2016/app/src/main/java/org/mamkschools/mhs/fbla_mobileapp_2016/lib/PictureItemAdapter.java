@@ -25,8 +25,7 @@ public class PictureItemAdapter extends RecyclerView.Adapter<PictureItemAdapter.
     @Override
     public PictureItemAdapter.PictureViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.target_single_picture, parent, false);
-        PictureViewHolder viewHolder = new PictureViewHolder(v);
-        return viewHolder;
+        return new PictureViewHolder(v);
     }
 
     @Override

@@ -45,7 +45,7 @@ public class SecureAPI {
         if( mySecureAPI == null){
             try {
                 mySecureAPI = new SecureAPI(c.getApplicationContext()
-                        .getResources().openRawResource(R.raw.servercert));
+                        .getResources().openRawResource(R.raw.ca));
             }catch (Exception e){
                 Debug.log(e.getMessage());
             }
@@ -159,7 +159,8 @@ public class SecureAPI {
         return new JSONObject(response);
     }
 
-    public JSONObject HTTPSPOSTMULTI(String action, Map<String, String> params, Map<String, ByteArrayOutputStream> files, Context ctx) throws Exception {
+    public JSONObject HTTPSPOSTMULTI(String action, Map<String, String> params, Map<String,
+            ByteArrayOutputStream> files, Context ctx) throws Exception {
         URL url = new URL(Constants.API_BASE_URL + action);
         HttpsURLConnection httpsURLConnection = (HttpsURLConnection) url.openConnection();
 

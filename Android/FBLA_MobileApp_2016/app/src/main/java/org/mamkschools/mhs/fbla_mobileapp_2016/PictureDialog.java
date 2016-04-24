@@ -11,8 +11,10 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
+ * Displays a larger version of the picture
  * Created by Andrew A. Katz on 4/17/2016.
  */
 public class PictureDialog extends Dialog implements View.OnClickListener{
@@ -41,6 +43,7 @@ public class PictureDialog extends Dialog implements View.OnClickListener{
         bigPicture.setImageBitmap(image);
         imageTitle.setText(imageTitleText);
         imageLayout.setOnClickListener(this);
+        Toast.makeText(getContext(), R.string.tap_exit, Toast.LENGTH_SHORT).show();
     }
 
     @Override

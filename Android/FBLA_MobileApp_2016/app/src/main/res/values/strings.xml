@@ -44,5 +44,7 @@
     <string name="imgTitle">Image Title</string>
     <string name="getPic">Choose Picture</string>
 
+    <string name="tap_exit">Tap to exit</string>
+
     <string name="style">How stylish is this outfit?</string>
 </resources>
