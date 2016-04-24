@@ -46,6 +46,7 @@ public class CommentItemAdapter extends RecyclerView.Adapter<CommentItemAdapter.
         private TextView commentText;
         private TextView userName;
         private TextView style;
+        private boolean small;
 
 
         public PictureViewHolder(View itemView) {
@@ -54,11 +55,13 @@ public class CommentItemAdapter extends RecyclerView.Adapter<CommentItemAdapter.
             userName = (TextView) itemView.findViewById(R.id.username);
             style = (TextView) itemView.findViewById(R.id.style);
             itemView.setOnClickListener(this);
+            small = true;
         }
 
         @Override
         public void onClick(View v) {
-            Toast.makeText(v.getContext(), commentText.getText(), Toast.LENGTH_LONG).show();
+            small = !small;
+            commentText.setMaxLines(small ? 3 : 100);
         }
     }
 }
